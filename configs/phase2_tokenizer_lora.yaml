@@ -1,0 +1,17 @@
+# Phase 2: Tokenizer and LoRA Configuration (High-End Production Setup)
+tokenizer:
+  corpus_path: "data/urdu_wikipedia_corpus.txt" 
+  vocab_size: 5000
+  output_dir: "data/tokenizer"
+
+lora:
+  base_model_name: "Qwen/Qwen2.5-0.5B" 
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules: 
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+  output_dir: "data/lora_model"

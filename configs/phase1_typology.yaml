@@ -1,0 +1,10 @@
+# Phase 1: Typological Alignment Configuration
+target_lang: "urd"
+anchor_langs: 
+  - "hin"  # Hindi (Typologically closest: SOV, Indic)
+  - "fas"  # Persian (Lexically closest: Perso-Arabic script)
+  - "eng"  # English (Baseline)
+feature_sets: 
+  - "syntax_average"
+  - "phonology_average"
+output_dir: "data/typology"

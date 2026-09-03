@@ -1,0 +1,26 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Data and Model Artifacts (Too large for GitHub)
+data/
+*.pt
+*.bin
+*.safetensors
+*.onnx
+
+# Python cache and logs
+__pycache__/
+*.pyc
+*.pyo
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
