@@ -45,3 +45,28 @@ class Phase2Config(BaseModel):
     """Wrapper config for Phase 2 to load both Tokenizer and LoRA configs from one YAML."""
     tokenizer: TokenizerConfig
     lora: LoRAConfig
+
+class EmbeddingConfig(BaseModel):
+    """Configuration for the Bi-Encoder (Contrastive Retrieval) training."""
+    base_model_name: str = Field(
+        default="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+        description="Multilingual base model to fine-tune for Urdu embeddings"
+    )
+    learning_rate: float = Field(default=2e-5, ge=1e-6)
+    batch_size: int = Field(default=32, ge=1)
+    epochs: int = Field(default=3, ge=1)
+    output_dir: Path = Field(default=Path("data/embedder"))
+
+class RerankerConfig(BaseModel):
+    """Configuration for the Cross-Encoder Reranker."""
+    base_model_name: str = Field(
+        default="cross-encoder/ms-marco-MiniLM-L-12-v2",
+        description="Cross-encoder base model for high-precision reranking"
+    )
+    top_k: int = Field(default=3, ge=1, description="Number of final documents to pass to the LLM")
+    output_dir: Path = Field(default=Path("data/reranker"))
+
+class Phase3Config(BaseModel):
+    """Wrapper config for Phase 3."""
+    embedding: EmbeddingConfig
+    reranker: RerankerConfig
