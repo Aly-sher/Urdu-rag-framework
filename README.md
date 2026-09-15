@@ -39,30 +39,30 @@ python -m venv .venv
 Install the framework and all dependencies in editable mode:
  pip install -e .
 
-🚀 Reproducing the Pipeline
+## 🚀 Reproducing the Pipeline
 The framework exposes a professional Command Line Interface (CLI) via the urdu-rag command. You can execute the entire research pipeline sequentially:
-Phase 1: Data Fetching & Typological Alignment
-# Fetch and clean the Urdu Wikipedia/OSCAR corpus
+## Phase 1: Data Fetching & Typological Alignment
+Fetch and clean the Urdu Wikipedia/OSCAR corpus
 urdu-rag fetch-data --samples 500
 
-# Compute URIEL+ typological distances and identify the closest anchor language
+Compute URIEL+ typological distances and identify the closest anchor language
 urdu-rag align-typology
 
-Phase 2: Tokenization & Parameter-Efficient Setup
-# Train a custom Byte-Level BPE tokenizer optimized for the Nastaliq script
+## Phase 2: Tokenization & Parameter-Efficient Setup
+Train a custom Byte-Level BPE tokenizer optimized for the Nastaliq script
 urdu-rag train-tokenizer
 
-# Initialize the base model (e.g., Qwen2.5) and inject LoRA adapters
+Initialize the base model (e.g., Qwen2.5) and inject LoRA adapters
 urdu-rag setup-lora
 
-Phase 3: Data Hygiene & Contrastive Retrieval
-# Mine BM25 hard negatives from the corpus for InfoNCE contrastive training
+## Phase 3: Data Hygiene & Contrastive Retrieval
+Mine BM25 hard negatives from the corpus for InfoNCE contrastive training
 urdu-rag mine-hard-negatives
 
-# Evaluate the retrieval pipeline using standard IR metrics (Recall@k, MRR, nDCG)
+Evaluate the retrieval pipeline using standard IR metrics (Recall@k, MRR, nDCG)
 urdu-rag evaluate-retrieval
 
-📊 Evaluation Metrics
+## 📊 Evaluation Metrics
 
 The framework includes a dedicated evaluation harness (src/urdu_rag/core/evaluation.py) designed to rigorously benchmark the retrieval stage against human-annotated Urdu query-document relevance sets.
 
@@ -72,7 +72,7 @@ Supported metrics include:
 -MRR (Mean Reciprocal Rank): Evaluates the rank of the first relevant document retrieved.
 -nDCG@k(Normalized Discounted Cumulative Gain): Measures ranking quality by assigning higher relevance scores to documents appearing at the top of the list.
 
-📖 Citation
+## 📖 Citation
 If you use this framework, pipeline, or evaluation harness in your research, please cite our upcoming paper:
 @misc{urdu_rag_framework_2026,
   author = Ali Sher Khan Tareen,
@@ -83,5 +83,5 @@ If you use this framework, pipeline, or evaluation harness in your research, ple
   howpublished = {\url{https://github.com/Aly-sher/Urdu-rag-framework}},
 }
 
-⚖️ License
+## ⚖️ License
 This project is licensed under the MIT License - see the LICENSE file for details.
