@@ -73,14 +73,17 @@ Supported metrics include:
 -nDCG@k(Normalized Discounted Cumulative Gain): Measures ranking quality by assigning higher relevance scores to documents appearing at the top of the list.
 
 ## 📖 Citation
+
 If you use this framework, pipeline, or evaluation harness in your research, please cite our upcoming paper:
+
+```bibtex
 @misc{urdu_rag_framework_2026,
-author = Ali Sher Khan Tareen,
-title = {A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages},
-year = {2026},
-publisher = https://github.com/Aly-sher,
-journal = https://github.com/Aly-sher/Urdu-rag-framework,
-howpublished = {\url{https://github.com/Aly-sher/Urdu-rag-framework}},
+  author       = {ALI SHER KHAN TAREEN},
+  title        = {A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages},
+  year         = {2026},
+  publisher    = {https://github.com/Aly-sher},
+  journal      = {https://github.com/Aly-sher/Urdu-rag-framework},
+  howpublished = {\url{https://github.com/Aly-sher/Urdu-rag-framework}},
 }
 
 ## ⚖️ License
