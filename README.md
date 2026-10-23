@@ -106,14 +106,13 @@ Supported metrics include:
 ## 📖 Citation
 
 If you use this framework, pipeline, or evaluation harness in your research, please cite our upcoming paper:
-bibtex
-@misc{urdu_rag_framework_2026,
-  - author       = {Ali Sher Khan Tareen},
-  - title        = {A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages},
+
+  - author       = Ali Sher Khan Tareen,
+  - title        = A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages,
   - year         = {2026},
-  - publisher    = {https://github.com/Aly-sher},
-  - journal      = {https://github.com/Aly-sher/Urdu-rag-framework},
-  - howpublished = {\url{https://github.com/Aly-sher/Urdu-rag-framework}},
+  - publisher    = https://github.com/Aly-sher,
+  - journal      = https://github.com/Aly-sher/Urdu-rag-framework,
+  - howpublished = https://github.com/Aly-sher/Urdu-rag-framework,
 }
 
 ---
