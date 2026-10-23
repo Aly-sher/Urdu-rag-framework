@@ -31,7 +31,7 @@ This framework is built as a standard, pip-installable Python package.
    ```bash
    git clone https://github.com/Aly-sher/Urdu-rag-framework.git
    cd Urdu-rag-framework
-Create and activate a virtual environment (Python 3.10+ recommended):
+# Create and activate a virtual environment (Python 3.10+ recommended):
 bash
    python -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
@@ -41,46 +41,50 @@ bash
 ---   
 ## 🚀 Reproducing the Pipeline
 The framework exposes a professional Command Line Interface (CLI) via the urdu-rag command. You can execute the entire research pipeline sequentially:
-## Phase 1: Data Fetching & Typological Alignment
+# Phase 1: Data Fetching & Typological Alignment
 bash
 Fetch and clean the Urdu Wikipedia/OSCAR corpus
 urdu-rag fetch-data --samples 500
 
-# Compute URIEL+ typological distances and identify the closest anchor language
+Compute URIEL+ typological distances and identify the closest anchor language
 urdu-rag align-typology
-## Phase 2: Tokenization & Continual Pre-Training (CPT)
+
+# Phase 2: Tokenization & Continual Pre-Training (CPT)
 bash
-# Train a custom Byte-Level BPE tokenizer optimized for the Nastaliq script
+Train a custom Byte-Level BPE tokenizer optimized for the Nastaliq script
 urdu-rag train-tokenizer
 
-# Initialize the base model and inject LoRA adapters
+Initialize the base model and inject LoRA adapters
 urdu-rag setup-lora
 
-# Run Continual Pre-Training with Typological Initialization
+Run Continual Pre-Training with Typological Initialization
 urdu-rag train-cpt
 
-# Run the Ablation Baseline (Random Initialization)
+Run the Ablation Baseline (Random Initialization)
 urdu-rag train-cpt --ablation-random-init
-## Phase 3: Retrieval & Contrastive Learning
+
+# Phase 3: Retrieval & Contrastive Learning
 bash
-# Mine BM25 hard negatives from the corpus for InfoNCE contrastive training
+Mine BM25 hard negatives from the corpus for InfoNCE contrastive training
 urdu-rag mine-hard-negatives
 
-# Train the Bi-Encoder using InfoNCE on real Urdu triplets
+Train the Bi-Encoder using InfoNCE on real Urdu triplets
 urdu-rag train-retriever
-## Phase 4: Evaluation & Generation
+
+# Phase 4: Evaluation & Generation
 bash
-# Establish an off-the-shelf multilingual baseline for retrieval
+Establish an off-the-shelf multilingual baseline for retrieval
 urdu-rag evaluate-baseline
 
-# Evaluate retrieval performance using standard IR metrics (Recall@k, MRR, nDCG)
+Evaluate retrieval performance using standard IR metrics (Recall@k, MRR, nDCG)
 urdu-rag evaluate-retrieval
 
-# Test the Faithfulness/Hallucination evaluator
+Test the Faithfulness/Hallucination evaluator
 urdu-rag test-faithfulness
 
-# Run an end-to-end RAG query (Retrieval -> Reranking -> Generation)
+Run an end-to-end RAG query (Retrieval -> Reranking -> Generation)
 urdu-rag generate "پاکستان کا دارالحکومت کیا ہے؟"
+
 ---
 ## 📊 Evaluation Metrics
 The framework includes a dedicated evaluation harness designed to rigorously benchmark the retrieval and generation stages against human-annotated Urdu query-document relevance sets.
@@ -88,9 +92,13 @@ The framework includes a dedicated evaluation harness designed to rigorously ben
 Supported metrics include:
 
 Recall@k: Measures the fraction of relevant documents retrieved in the top k results.
+
 MRR (Mean Reciprocal Rank): Evaluates the rank of the first relevant document retrieved.
+
 nDCG@k (Normalized Discounted Cumulative Gain): Measures ranking quality by assigning higher relevance scores to documents appearing at the top of the list.
+
 Faithfulness Score: A lexical-overlap proxy that measures the proportion of generated answer entities that are actually supported by the retrieved context, directly addressing the hallucination problem.
+
 ---
 ## 📖 Citation
 If you use this framework, pipeline, or evaluation harness in your research, please cite our upcoming paper:
