@@ -1,26 +1,42 @@
-# Virtual Environment
+# --- Python & Virtual Environments ---
 .venv/
 venv/
-env/
-
-# Data and Model Artifacts (Too large for GitHub)
-data/
-*.pt
-*.bin
-*.safetensors
-*.onnx
-
-# Python cache and logs
 __pycache__/
-*.pyc
-*.pyo
-*.log
-logs/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+.pytest_cache/
 
-# OS files
+# --- IDE & OS Files ---
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
 
-# IDE
-.vscode/
-.idea/
+# --- HuggingFace & ML Caches ---
+.cache/
+wandb/
+runs/
+*.log
+
+# --- Heavy Data & Model Artifacts (CRITICAL) ---
+# Ignore all heavy data files, but keep small JSONL configs
+data/*.bin
+data/*.safetensors
+data/*.pt
+data/*.pth
+data/*.txt
+data/*.csv
+data/embedder/
+data/reranker/
+data/lora_model/
+data/tokenizer/
+data/lid.176.bin
+
+# Keep our tiny 5-line evaluation dataset for reproducibility
+!data/urdu_rag_eval.jsonl
+
+# --- Jupyter Notebooks (Optional, but good practice to hide checkpoints) ---
+.ipynb_checkpoints/
