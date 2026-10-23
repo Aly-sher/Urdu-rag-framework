@@ -45,7 +45,7 @@ This framework is built as a standard, pip-installable Python package.
 ## 🚀 Reproducing the Pipeline
 The framework exposes a professional Command Line Interface (CLI) via the urdu-rag command. You can execute the entire research pipeline sequentially:
 # Phase 1: Data Fetching & Typological Alignment
-  ```bash
+
 Fetch and clean the Urdu Wikipedia/OSCAR corpus
 urdu-rag fetch-data --samples 500
 
@@ -53,7 +53,7 @@ Compute URIEL+ typological distances and identify the closest anchor language
 urdu-rag align-typology
 
 # Phase 2: Tokenization & Continual Pre-Training (CPT)
-  ```bash
+
 Train a custom Byte-Level BPE tokenizer optimized for the Nastaliq script
 urdu-rag train-tokenizer
 
@@ -67,7 +67,7 @@ Run the Ablation Baseline (Random Initialization)
 urdu-rag train-cpt --ablation-random-init
 
 # Phase 3: Retrieval & Contrastive Learning
-  ```bash
+
 Mine BM25 hard negatives from the corpus for InfoNCE contrastive training
 urdu-rag mine-hard-negatives
 
@@ -75,7 +75,7 @@ Train the Bi-Encoder using InfoNCE on real Urdu triplets
 urdu-rag train-retriever
 
 # Phase 4: Evaluation & Generation
-  ```bash
+
 Establish an off-the-shelf multilingual baseline for retrieval
 urdu-rag evaluate-baseline
 
@@ -104,8 +104,9 @@ Supported metrics include:
 
 ---
 ## 📖 Citation
+
 If you use this framework, pipeline, or evaluation harness in your research, please cite our upcoming paper:
-```bibtex
+bibtex
 @misc{urdu_rag_framework_2026,
   author       = {Ali Sher Khan Tareen},
   title        = {A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages},
@@ -114,6 +115,8 @@ If you use this framework, pipeline, or evaluation harness in your research, ple
   journal      = {https://github.com/Aly-sher/Urdu-rag-framework},
   howpublished = {\url{https://github.com/Aly-sher/Urdu-rag-framework}},
 }
+
 ---
+
 ## ⚖️ License
 This project is licensed under the MIT License - see the LICENSE file for details.
