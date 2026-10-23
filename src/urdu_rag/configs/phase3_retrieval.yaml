@@ -2,7 +2,7 @@
 embedding:
   base_model_name: "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
   learning_rate: 2.0e-5
-  batch_size: 32
+  batch_size: 2
   epochs: 3
   output_dir: "data/embedder"
 

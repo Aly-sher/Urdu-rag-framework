@@ -1,4 +1,5 @@
 import logging
+import re
 import numpy as np
 from typing import List, Dict
 
@@ -78,3 +79,34 @@ class RetrievalEvaluator:
             results[key] /= num_queries
             
         return results
+
+   
+
+class FaithfulnessEvaluator:
+    """
+    Evaluates whether the generated answer is grounded in the retrieved context.
+    Uses a lightweight entity/keyword overlap heuristic as a proxy for NLI entailment.
+    """
+    def __init__(self):
+        # Simple Urdu stop words to ignore during overlap calculation
+        self.stop_words = {"ہے", "ہیں", "کا", "کی", "کے", "اور", "میں", "سے", "پر", "نے"}
+
+    def compute_faithfulness(self, generated_answer: str, retrieved_context: str) -> float:
+        """
+        Returns a score between 0.0 and 1.0 indicating how much of the answer 
+        is supported by the retrieved context.
+        """
+        # Tokenize (simple whitespace split for Urdu)
+        answer_tokens = set(re.findall(r'\b\w+\b', generated_answer))
+        context_tokens = set(re.findall(r'\b\w+\b', retrieved_context))
+        
+        # Remove stop words
+        answer_keywords = answer_tokens - self.stop_words
+        if not answer_keywords:
+            return 1.0 # Trivial short answer
+            
+        # Calculate overlap
+        overlapping_keywords = answer_keywords.intersection(context_tokens)
+        faithfulness_score = len(overlapping_keywords) / len(answer_keywords)
+        
+        return faithfulness_score
