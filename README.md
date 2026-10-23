@@ -105,7 +105,7 @@ Supported metrics include:
 ---
 ## 📖 Citation
 If you use this framework, pipeline, or evaluation harness in your research, please cite our upcoming paper:
-bibtex
+
 @misc{urdu_rag_framework_2026,
   author       = {Ali Sher Khan Tareen},
   title        = {A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages},
