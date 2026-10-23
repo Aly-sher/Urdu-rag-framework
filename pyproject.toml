@@ -1,42 +1,103 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "urdu-rag-framework"
+name = "urdu-rag"
 version = "0.1.0"
-description = "A typology-driven, research-grade Retrieval-Augmented Generation framework for low-resource languages."
+description = "A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages (Urdu)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "Ali Sher Khan Tareen " }]
-
-dependencies = [
-    "torch>=2.0.0",
-    "transformers>=4.35.0",
-    "peft>=0.6.0",
-    "tokenizers>=0.15.0",
-    "scipy>=1.11.0",
-    "numpy>=1.24.0",
-    "pydantic>=2.0.0",
-    "pyyaml>=6.0",
-    "typer>=0.9.0",
-    "rich>=13.0.0",
-    "datasets>=2.14.0",
-    "setuptools<71.0.0",
-    "rank-bm25>=0.2.2",
-    "sentence-transformers>=2.2.0", 
-    # NOTE: lang2vec must be installed manually via: 
-    # pip install git+https://github.com/antonisa/lang2vec.git
+authors = [
+    { name = "Ali Sher Khan Tareen" }
+]
+keywords = [
+    "nlp",
+    "urdu",
+    "rag",
+    "retrieval-augmented-generation",
+    "low-resource-languages",
+    "llm",
+    "lora",
+    "typology"
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
 ]
 
-[project.optional-dependencies]
-dev = ["pytest", "ruff"]
+# --- Core Runtime Dependencies ---
+dependencies = [
+    # CLI & Configuration
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "pyyaml>=6.0",
+    "pydantic>=2.0.0",
 
+    # Core ML Stack (HuggingFace Ecosystem)
+    "torch>=2.1.0",
+    "transformers>=4.40.0",
+    "datasets>=2.18.0",
+    "accelerate>=0.27.0",
+    "peft>=0.10.0",
+    "safetensors>=0.4.0",      # CRITICAL: Required for modern model weight loading
+    "tokenizers>=0.15.0",      # CRITICAL: Required for custom BPE tokenizer training
+    "huggingface-hub>=0.20.0", # Explicitly for downloading models/datasets
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+
+    # Retrieval & Embedding Stack
+    "sentence-transformers>=2.6.0",
+    "rank-bm25>=0.2.2",
+
+    # Typology & Linguistics
+    "lang2vec>=0.1.2",         # For URIEL distance matrices
+
+    # Utilities
+    "requests>=2.28.0",
+    "tqdm>=4.66.0",            # Progress bars for data processing
+]
+
+# --- Optional Dependencies (Keeps base install lightweight) ---
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+]
+eval = [
+    # Advanced evaluation metrics requested by the reviewer
+    "bert-score>=0.3.13",
+    "rouge-score>=0.1.2",
+    "evaluate>=0.4.1",
+]
+tracking = [
+    # Experiment tracking requested by the reviewer
+    "wandb>=0.16.0",
+    "tensorboard>=2.15.0",
+]
+
+# --- CLI Entry Point ---
 [project.scripts]
-# This creates the 'urdu-rag' command in your terminal once the CLI is built
 urdu-rag = "urdu_rag.cli:app"
 
-[tool.hatch.build.targets.wheel]
-packages = ["src/urdu_rag"]
+# --- Repository URLs ---
+[project.urls]
+Homepage = "https://github.com/Aly-sher/Urdu-rag-framework"
+Repository = "https://github.com/Aly-sher/Urdu-rag-framework"
+Issues = "https://github.com/Aly-sher/Urdu-rag-framework/issues"
 
+# --- Package Discovery (src/ layout) ---
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# --- Pytest Configuration ---
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"
