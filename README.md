@@ -14,12 +14,12 @@
 Unlike standard RAG implementations that rely on off-the-shelf English embedding models, this framework is built from the ground up to address the specific morphological and semantic challenges of the Urdu language:
 
 1. **Strict Data Hygiene & Decontamination:** Implements a pure-Python Unicode heuristic filter to eliminate code-switched noise, combined with strict $n$-gram overlap decontamination to prevent evaluation data leakage during Continual Pre-Training (CPT).
-2. **Typological Proximity Ranking:** Utilizes the URIEL+ database to compute geometric distances between language feature vectors, identifying the optimal donor language (Hindi) for cross-lingual embedding initialization.
+2. **Typological Proximity Ranking & Ablation:** Utilizes the URIEL+ database to compute geometric distances between language feature vectors, identifying the optimal donor language (Hindi) for cross-lingual embedding initialization. Includes a built-in ablation mode to compare Typology-Init vs. Random-Init training loss.
 3. **Parameter-Efficient Adaptation:** Employs Low-Rank Adaptation (LoRA) targeting both attention and MLP projection matrices, restricting trainable parameters to $<1\%$ of the base model to prevent catastrophic forgetting of foundational reasoning capabilities.
 4. **Cascade Contrastive Retrieval:** 
    - *Stage 1:* A BM25 index mines "Hard Negatives" (documents with high lexical overlap but low semantic relevance) to train a Bi-Encoder using InfoNCE loss, forcing deep Urdu semantic understanding.
    - *Stage 2:* A Cross-Encoder reranker processes the top-$k$ candidates via deep cross-attention to maximize retrieval precision before LLM injection.
-5. **Standard IR Evaluation Harness:** Built-in computation of industry-standard Information Retrieval metrics, including Recall@$k$, Mean Reciprocal Rank (MRR), and Normalized Discounted Cumulative Gain (nDCG@$k$).
+5. **Standard IR Evaluation & Hallucination Mitigation:** Built-in computation of industry-standard Information Retrieval metrics (Recall@$k$, MRR, nDCG@$k$), alongside a dedicated Faithfulness Evaluator that measures how well generated answers are grounded in the retrieved context.
 
 ---
 
@@ -31,60 +31,78 @@ This framework is built as a standard, pip-installable Python package.
    ```bash
    git clone https://github.com/Aly-sher/Urdu-rag-framework.git
    cd Urdu-rag-framework
-
 Create and activate a virtual environment (Python 3.10+ recommended):
-python -m venv .venv
+bash
+   python -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
 Install the framework and all dependencies in editable mode:
- pip install -e .
-
+bash
+   pip install -e .
+---   
 ## 🚀 Reproducing the Pipeline
 The framework exposes a professional Command Line Interface (CLI) via the urdu-rag command. You can execute the entire research pipeline sequentially:
-## Phase 1: Data Fetching & Typological Alignment
-Fetch and clean the Urdu Wikipedia/OSCAR corpus
+Phase 1: Data Fetching & Typological Alignment
+bash
+# Fetch and clean the Urdu Wikipedia/OSCAR corpus
 urdu-rag fetch-data --samples 500
 
-Compute URIEL+ typological distances and identify the closest anchor language
+# Compute URIEL+ typological distances and identify the closest anchor language
 urdu-rag align-typology
-
-## Phase 2: Tokenization & Parameter-Efficient Setup
-Train a custom Byte-Level BPE tokenizer optimized for the Nastaliq script
+Phase 2: Tokenization & Continual Pre-Training (CPT)
+bash
+# Train a custom Byte-Level BPE tokenizer optimized for the Nastaliq script
 urdu-rag train-tokenizer
 
-Initialize the base model (e.g., Qwen2.5) and inject LoRA adapters
+# Initialize the base model and inject LoRA adapters
 urdu-rag setup-lora
 
-## Phase 3: Data Hygiene & Contrastive Retrieval
-Mine BM25 hard negatives from the corpus for InfoNCE contrastive training
+# Run Continual Pre-Training with Typological Initialization
+urdu-rag train-cpt
+
+# Run the Ablation Baseline (Random Initialization)
+urdu-rag train-cpt --ablation-random-init
+Phase 3: Retrieval & Contrastive Learning
+bash
+# Mine BM25 hard negatives from the corpus for InfoNCE contrastive training
 urdu-rag mine-hard-negatives
 
-Evaluate the retrieval pipeline using standard IR metrics (Recall@k, MRR, nDCG)
+# Train the Bi-Encoder using InfoNCE on real Urdu triplets
+urdu-rag train-retriever
+Phase 4: Evaluation & Generation
+bash
+# Establish an off-the-shelf multilingual baseline for retrieval
+urdu-rag evaluate-baseline
+
+# Evaluate retrieval performance using standard IR metrics (Recall@k, MRR, nDCG)
 urdu-rag evaluate-retrieval
 
-## 📊 Evaluation Metrics
+# Test the Faithfulness/Hallucination evaluator
+urdu-rag test-faithfulness
 
-The framework includes a dedicated evaluation harness (src/urdu_rag/core/evaluation.py) designed to rigorously benchmark the retrieval stage against human-annotated Urdu query-document relevance sets.
+# Run an end-to-end RAG query (Retrieval -> Reranking -> Generation)
+urdu-rag generate "پاکستان کا دارالحکومت کیا ہے؟"
+---
+## 📊 Evaluation Metrics
+The framework includes a dedicated evaluation harness designed to rigorously benchmark the retrieval and generation stages against human-annotated Urdu query-document relevance sets.
 
 Supported metrics include:
 
--Recall@k:Measures the fraction of relevant documents retrieved in the top k results.
+-Recall@k: Measures the fraction of relevant documents retrieved in the top k results.
 -MRR (Mean Reciprocal Rank): Evaluates the rank of the first relevant document retrieved.
--nDCG@k(Normalized Discounted Cumulative Gain): Measures ranking quality by assigning higher relevance scores to documents appearing at the top of the list.
-
+-nDCG@k (Normalized Discounted Cumulative Gain): Measures ranking quality by assigning higher relevance scores to documents appearing at the top of the list.
+-Faithfulness Score: A lexical-overlap proxy that measures the proportion of generated answer entities that are actually supported by the retrieved context, directly addressing the hallucination problem.
+---
 ## 📖 Citation
-
 If you use this framework, pipeline, or evaluation harness in your research, please cite our upcoming paper:
-
-```bibtex
+bibtex
 @misc{urdu_rag_framework_2026,
-  author       = {ALI SHER KHAN TAREEN},
+  author       = {Your Name},
   title        = {A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages},
   year         = {2026},
-  publisher    = {https://github.com/Aly-sher},
-  journal      = {https://github.com/Aly-sher/Urdu-rag-framework},
+  publisher    = {GitHub},
+  journal      = {GitHub repository},
   howpublished = {\url{https://github.com/Aly-sher/Urdu-rag-framework}},
 }
-
+---
 ## ⚖️ License
 This project is licensed under the MIT License - see the LICENSE file for details.
