@@ -41,14 +41,14 @@ bash
 ---   
 ## 🚀 Reproducing the Pipeline
 The framework exposes a professional Command Line Interface (CLI) via the urdu-rag command. You can execute the entire research pipeline sequentially:
-Phase 1: Data Fetching & Typological Alignment
+## Phase 1: Data Fetching & Typological Alignment
 bash
-# Fetch and clean the Urdu Wikipedia/OSCAR corpus
+Fetch and clean the Urdu Wikipedia/OSCAR corpus
 urdu-rag fetch-data --samples 500
 
 # Compute URIEL+ typological distances and identify the closest anchor language
 urdu-rag align-typology
-Phase 2: Tokenization & Continual Pre-Training (CPT)
+## Phase 2: Tokenization & Continual Pre-Training (CPT)
 bash
 # Train a custom Byte-Level BPE tokenizer optimized for the Nastaliq script
 urdu-rag train-tokenizer
@@ -61,14 +61,14 @@ urdu-rag train-cpt
 
 # Run the Ablation Baseline (Random Initialization)
 urdu-rag train-cpt --ablation-random-init
-Phase 3: Retrieval & Contrastive Learning
+## Phase 3: Retrieval & Contrastive Learning
 bash
 # Mine BM25 hard negatives from the corpus for InfoNCE contrastive training
 urdu-rag mine-hard-negatives
 
 # Train the Bi-Encoder using InfoNCE on real Urdu triplets
 urdu-rag train-retriever
-Phase 4: Evaluation & Generation
+## Phase 4: Evaluation & Generation
 bash
 # Establish an off-the-shelf multilingual baseline for retrieval
 urdu-rag evaluate-baseline
@@ -87,20 +87,20 @@ The framework includes a dedicated evaluation harness designed to rigorously ben
 
 Supported metrics include:
 
--Recall@k: Measures the fraction of relevant documents retrieved in the top k results.
--MRR (Mean Reciprocal Rank): Evaluates the rank of the first relevant document retrieved.
--nDCG@k (Normalized Discounted Cumulative Gain): Measures ranking quality by assigning higher relevance scores to documents appearing at the top of the list.
--Faithfulness Score: A lexical-overlap proxy that measures the proportion of generated answer entities that are actually supported by the retrieved context, directly addressing the hallucination problem.
+Recall@k: Measures the fraction of relevant documents retrieved in the top k results.
+MRR (Mean Reciprocal Rank): Evaluates the rank of the first relevant document retrieved.
+nDCG@k (Normalized Discounted Cumulative Gain): Measures ranking quality by assigning higher relevance scores to documents appearing at the top of the list.
+Faithfulness Score: A lexical-overlap proxy that measures the proportion of generated answer entities that are actually supported by the retrieved context, directly addressing the hallucination problem.
 ---
 ## 📖 Citation
 If you use this framework, pipeline, or evaluation harness in your research, please cite our upcoming paper:
 bibtex
 @misc{urdu_rag_framework_2026,
-  author       = {Your Name},
+  author       = {Ali Sher Khan Tareen},
   title        = {A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages},
   year         = {2026},
-  publisher    = {GitHub},
-  journal      = {GitHub repository},
+  publisher    = {https://github.com/Aly-sher},
+  journal      = {https://github.com/Aly-sher/Urdu-rag-framework},
   howpublished = {\url{https://github.com/Aly-sher/Urdu-rag-framework}},
 }
 ---
