@@ -58,6 +58,7 @@ Note: As this is a research prototype, some commands (like train-cpt) are curren
 bash
 urdu-rag fetch-data --samples 500
 urdu-rag align-typology
+
 ---
 
 **Phase 2: Tokenization & Adaptation**
@@ -65,6 +66,7 @@ bash
 urdu-rag train-tokenizer
 urdu-rag setup-lora
 urdu-rag train-cpt
+
 ---
 
 **Phase 3: Retrieval & Evaluation**
@@ -72,6 +74,7 @@ bash
 urdu-rag mine-hard-negatives
 urdu-rag train-retriever
 urdu-rag evaluate-retrieval
+
 ---
 
 
