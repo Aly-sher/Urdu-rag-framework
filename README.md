@@ -1,121 +1,101 @@
-﻿# Urdu-RAG Framework
+# Urdu-RAG Framework
 ### A Typology-Driven Retrieval-Augmented Generation Pipeline for Low-Resource Languages
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![arXiv](https://img.shields.io/badge/arXiv-Pending-b31b1b.svg)]()
 
-> **Abstract:** While recent monolingual Urdu Large Language Models (e.g., Qalb-8B, Alif-1.0) have achieved state-of-the-art performance in generative tasks, they remain highly susceptible to factual hallucinations in specialized, localized domains due to reliance on parametric memory. This repository introduces a rigorous, end-to-end Retrieval-Augmented Generation (RAG) framework specifically architected for Urdu. By integrating strict $n$-gram data decontamination, typological proximity ranking, parameter-efficient Continual Pre-Training (CPT), and a two-stage cascade retrieval system (BM25 Hard-Negative Mining $\rightarrow$ Cross-Encoder Reranking), this framework provides a mathematically grounded, reproducible pipeline for low-resource RAG.
+> **Project Status:** Active Research Prototype.  
+> This repository implements the architectural scaffolding for a typology-informed RAG system for Urdu. While the core modules (Typology, Tokenization, Retrieval, Evaluation) are implemented, several components (such as full WECHSEL initialization and large-scale CPT) are currently in the "Smoke Test" or "Planned" phases. Please see the [Implementation Status](#-implementation-status) table below for details.
 
 ---
 
-## 🏛️ Architecture & Key Contributions
+## 🏛️ Implementation Status
 
-Unlike standard RAG implementations that rely on off-the-shelf English embedding models, this framework is built from the ground up to address the specific morphological and semantic challenges of the Urdu language:
+To ensure transparency and reproducibility, we explicitly categorize the current state of each pipeline component.
 
-1. **Strict Data Hygiene & Decontamination:** Implements a pure-Python Unicode heuristic filter to eliminate code-switched noise, combined with strict $n$-gram overlap decontamination to prevent evaluation data leakage during Continual Pre-Training (CPT).
-2. **Typological Proximity Ranking & Ablation:** Utilizes the URIEL+ database to compute geometric distances between language feature vectors, identifying the optimal donor language (Hindi) for cross-lingual embedding initialization. Includes a built-in ablation mode to compare Typology-Init vs. Random-Init training loss.
-3. **Parameter-Efficient Adaptation:** Employs Low-Rank Adaptation (LoRA) targeting both attention and MLP projection matrices, restricting trainable parameters to $<1\%$ of the base model to prevent catastrophic forgetting of foundational reasoning capabilities.
-4. **Cascade Contrastive Retrieval:** 
-   - *Stage 1:* A BM25 index mines "Hard Negatives" (documents with high lexical overlap but low semantic relevance) to train a Bi-Encoder using InfoNCE loss, forcing deep Urdu semantic understanding.
-   - *Stage 2:* A Cross-Encoder reranker processes the top-$k$ candidates via deep cross-attention to maximize retrieval precision before LLM injection.
-5. **Standard IR Evaluation & Hallucination Mitigation:** Built-in computation of industry-standard Information Retrieval metrics (Recall@$k$, MRR, nDCG@$k$), alongside a dedicated Faithfulness Evaluator that measures how well generated answers are grounded in the retrieved context.
+| Component | Status | Current Implementation & Limitations |
+| :--- | :--- | :--- |
+| **Typological Alignment** | 🟡 Partial | URIEL+ distance computation is implemented. **Planned:** Proper WECHSEL-style token-level embedding initialization. |
+| **Data Decontamination** | 🟡 Partial | `UrduDataProcessor` (n-gram filtering) logic is implemented. **Planned:** Full CLI integration and normalization pipeline. |
+| **LoRA CPT** | 🔴 Smoke Test | Currently runs a 10-step smoke test to verify the training loop. **Planned:** Full epoch training and model checkpointing. |
+| **BM25 Hard-Negative Mining** | 🟢 Implemented | Functional, but requires noise reduction (punctuation handling, truncation limits) for production use. |
+| **Bi-Encoder Training** | 🟢 Implemented | InfoNCE contrastive loop is fully functional. |
+| **Cross-Encoder Reranker** | 🔴 Planned | Architecture defined in configs, but code is not yet implemented. |
+| **IR Evaluation** | 🟡 Demo | Metrics (Recall@k, MRR, nDCG) are mathematically correct and unit-tested. **Note:** CLI currently requires manual generation of `predictions.json`. |
+| **End-to-End Generation** | 🔴 Demo | `generate` command uses simulated contexts. **Planned:** Integration with the actual Bi-Encoder/Reranker pipeline. |
+| **Faithfulness Evaluator** | 🔴 Demo | Uses a simple lexical overlap proxy. **Planned:** Integration of an NLI-based entailment model. |
 
 ---
 
 ## 🛠️ Installation
 
-This framework is built as a standard, pip-installable Python package. 
+This framework is built as a standard, pip-installable Python package.
 
-1. Clone the repository:
+1. **Clone the repository:**
    ```bash
    git clone https://github.com/Aly-sher/Urdu-rag-framework.git
    cd Urdu-rag-framework
 
-2. Create and activate a virtual environment (Python 3.10+ recommended):
+2. **Create and activate a virtual environment:**
    ```bash
    python -m venv .venv
-   source .venv/bin/activate
-   On Windows: .venv\Scripts\activate
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-3. Install the framework and all dependencies in editable mode:
-   ```bash
-   pip install -e .
----   
-## 🚀 Reproducing the Pipeline
-The framework exposes a professional Command Line Interface (CLI) via the urdu-rag command. You can execute the entire research pipeline sequentially:
-# Phase 1: Data Fetching & Typological Alignment
+ 3. **Install dependencies:**
+    ```bash
+    pip install -e .
+    pip install -e ".[dev]"
 
-Fetch and clean the Urdu Wikipedia/OSCAR corpus
+---
+
+## 🚀 Usage & CLI
+
+The framework exposes a Command Line Interface (CLI) via the urdu-rag command.
+
+Note: As this is a research prototype, some commands (like train-cpt) are currently configured as "smoke tests" (e.g., 10 steps) to verify the pipeline logic without requiring massive compute resources.
+
+# Phase 1: Data & Typology
+```bash
 urdu-rag fetch-data --samples 500
-
-Compute URIEL+ typological distances and identify the closest anchor language
 urdu-rag align-typology
 
-# Phase 2: Tokenization & Continual Pre-Training (CPT)
-
-Train a custom Byte-Level BPE tokenizer optimized for the Nastaliq script
+# Phase 2: Tokenization & Adaptation
+```bash
 urdu-rag train-tokenizer
-
-Initialize the base model and inject LoRA adapters
 urdu-rag setup-lora
-
-Run Continual Pre-Training with Typological Initialization
 urdu-rag train-cpt
 
-Run the Ablation Baseline (Random Initialization)
-urdu-rag train-cpt --ablation-random-init
-
-# Phase 3: Retrieval & Contrastive Learning
-
-Mine BM25 hard negatives from the corpus for InfoNCE contrastive training
+# Phase 3: Retrieval & Evaluation
+```bash
 urdu-rag mine-hard-negatives
-
-Train the Bi-Encoder using InfoNCE on real Urdu triplets
 urdu-rag train-retriever
-
-# Phase 4: Evaluation & Generation
-
-Establish an off-the-shelf multilingual baseline for retrieval
-urdu-rag evaluate-baseline
-
-Evaluate retrieval performance using standard IR metrics (Recall@k, MRR, nDCG)
 urdu-rag evaluate-retrieval
-
-Test the Faithfulness/Hallucination evaluator
-urdu-rag test-faithfulness
-
-Run an end-to-end RAG query (Retrieval -> Reranking -> Generation)
-urdu-rag generate "پاکستان کا دارالحکومت کیا ہے؟"
-
----
-## 📊 Evaluation Metrics
-The framework includes a dedicated evaluation harness designed to rigorously benchmark the retrieval and generation stages against human-annotated Urdu query-document relevance sets.
-
-Supported metrics include:
-
-- Recall@k: Measures the fraction of relevant documents retrieved in the top k results.
-
-- MRR (Mean Reciprocal Rank): Evaluates the rank of the first relevant document retrieved.
-
-- nDCG@k (Normalized Discounted Cumulative Gain): Measures ranking quality by assigning higher relevance scores to documents appearing at the top of the list.
-
-- Faithfulness Score: A lexical-overlap proxy that measures the proportion of generated answer entities that are actually supported by the retrieved context, directly addressing the hallucination problem.
-
----
-## 📖 Citation
-
-If you use this framework, pipeline, or evaluation harness in your research, please cite our upcoming paper:
-
-  - author       = Ali Sher Khan Tareen
-  - title        = A Typology-Driven Retrieval-Augmented Generation Framework for Low-Resource Languages
-  - year         = 2026
-  - publisher    = https://github.com/Aly-sher
-  - journal      = https://github.com/Aly-sher/Urdu-rag-framework
-  - howpublished = https://github.com/Aly-sher/Urdu-rag-framework
-}
-
 ---
 
-## ⚖️ License
-This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🧪 Testing
+The framework includes a suite of unit tests to verify the mathematical correctness of the evaluation metrics and data processing logic.
+Run the test suite with:
+```bash
+pytest tests/ -v
+
+## Current Coverage:
+- ✅ test_evaluation.py: Validates Recall@k, MRR, and nDCG@k calculations.
+- ✅ test_hard_negatives.py: Validates BM25 mining logic and triplet generation.
+---
+
+## 🗺️ Roadmap (Track B)
+The following items are identified as critical next steps for moving this framework from a prototype to a publication-grade system:
+
+- Real WECHSEL Initialization: Implement token-level alignment between Hindi and Urdu embeddings to replace the current distance-only typology step.
+- Validated Ablation Study: distinct training runs comparing Typology-Init vs. Random-Init with proper statistical significance testing.
+- NLI-Based Faithfulness: Replace the lexical overlap proxy with a model-based Natural Language Inference (NLI) check for hallucination detection.
+- Full-Scale Benchmarking: Evaluate against standard datasets (e.g., XQuAD-ur) rather than the current 5-query proof-of-concept.
+- Cross-Encoder Integration: Implement the Stage-2 reranking module.
+---
+
+
+
+
+  
+   
