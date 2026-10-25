@@ -55,14 +55,14 @@ The framework exposes a Command Line Interface (CLI) via the urdu-rag command.
 Note: As this is a research prototype, some commands (like train-cpt) are currently configured as "smoke tests" (e.g., 10 steps) to verify the pipeline logic without requiring massive compute resources.
 
 **Phase 1: Data & Typology**
-bash
+
 urdu-rag fetch-data --samples 500
 urdu-rag align-typology
 
 ---
 
 **Phase 2: Tokenization & Adaptation**
-bash
+
 urdu-rag train-tokenizer
 urdu-rag setup-lora
 urdu-rag train-cpt
@@ -70,7 +70,7 @@ urdu-rag train-cpt
 ---
 
 **Phase 3: Retrieval & Evaluation**
-bash
+
 urdu-rag mine-hard-negatives
 urdu-rag train-retriever
 urdu-rag evaluate-retrieval
